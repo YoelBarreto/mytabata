@@ -20,6 +20,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.yoel.mytabata.ui.theme.MytabataTheme
 
+var counterState: Boolean = false
+
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,17 +51,20 @@ fun Counter(modifier: Modifier = Modifier) {
         )
         Button(
             onClick = {
-                object : CountDownTimer(99000, 1000) {
+                if (!counterState) {
+                    object : CountDownTimer(99000, 1000) {
 
-                    override fun onTick(millisUntilFinished: Long) {
-                        // Convertimos el valor de theCounter a Int para restarle 1 y luego lo convertimos a String
-                        theCounter = (theCounter.toInt() - 1).toString()
-                    }
+                        override fun onTick(millisUntilFinished: Long) {
+                            // Convertimos el valor de theCounter a Int para restarle 1 y luego lo convertimos a String
+                            theCounter = (theCounter.toInt() - 1).toString()
+                        }
 
-                    override fun onFinish() {
-                        theCounter = "99" // Reiniciamos el contador a "99" cuando termina
-                    }
-                }.start()
+                        override fun onFinish() {
+                            counterState = false
+                        }
+                    }.start()
+                    counterState = true
+                }
         }
         ){
             Text(
