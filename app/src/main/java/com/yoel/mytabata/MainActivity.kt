@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.yoel.mytabata.ui.theme.MytabataTheme
 
@@ -33,9 +36,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Counter(modifier: Modifier = Modifier) {
+    var theCounter by remember { mutableStateOf("00")}
     Column (modifier = Modifier){
         Text(
-            text = "00",
+            text = "$theCounter",
             modifier = Modifier
         )
         Button(onClick = {}){
