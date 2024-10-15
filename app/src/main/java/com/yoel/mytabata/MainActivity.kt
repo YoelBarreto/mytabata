@@ -5,6 +5,7 @@ import android.os.CountDownTimer
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,11 +18,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.yoel.mytabata.ui.theme.MytabataTheme
 
 var counterState: Boolean = false
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,36 +42,56 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun Counter(modifier: Modifier = Modifier) {
-    var theCounter by remember { mutableStateOf("99")}
+    var theCounter by remember { mutableStateOf("30") } // Estado del contador como String
+    var counterState by remember { mutableStateOf(false) } // Para controlar el estado de ejecución del contador
+    var myCounter: CountDownTimer? by remember { mutableStateOf(null) } // Temporizador declarado a nivel superior
 
+    // Inicializamos el temporizador en LaunchedEffect
+    LaunchedEffect(Unit) {
+        myCounter = object : CountDownTimer(30000, 1000) {
 
-    Column (modifier = Modifier){
+            override fun onTick(millisUntilFinished: Long) {
+                theCounter = (theCounter.toInt() - 1).toString()
+            }
+
+            override fun onFinish() {
+                counterState = false
+            }
+        }
+
+        if (!counterState) {
+            counterState = true
+        }
+    }
+
+    Column(
+        modifier = Modifier.padding(top = 20.dp)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         Text(
-            text = "$theCounter",
-            modifier = Modifier
+            text = theCounter,
+            modifier = Modifier,
+            fontSize = 80.sp
         )
         Button(
+            modifier = Modifier.padding(top = 10.dp),
             onClick = {
-                if (!counterState) {
-                    object : CountDownTimer(99000, 1000) {
-
-                        override fun onTick(millisUntilFinished: Long) {
-                            // Convertimos el valor de theCounter a Int para restarle 1 y luego lo convertimos a String
-                            theCounter = (theCounter.toInt() - 1).toString()
-                        }
-
-                        override fun onFinish() {
-                            counterState = false
-                        }
-                    }.start()
+                if (counterState) {
+                    myCounter?.cancel() // Cancelar el temporizador si está en marcha
+                    counterState = false
+                } else {
+                    myCounter?.start() // Iniciar de nuevo el temporizador si está detenido
                     counterState = true
                 }
-        }
-        ){
+            }
+        ) {
             Text(
-                text = "Pulsar"
+                text = "Iniciar"
             )
         }
     }
