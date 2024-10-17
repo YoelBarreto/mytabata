@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yoel.mytabata.ui.theme.MytabataTheme
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MytabataTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Counter(
+                    Espera(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -44,10 +45,11 @@ class MainActivity : ComponentActivity() {
 }
 
 
+// Contador antes del Workout
 @Composable
-fun Counter(modifier: Modifier = Modifier) {
-    var number by remember { mutableStateOf(30) }
-    val countdown: Long by remember { mutableStateOf(30*1000) }
+fun Espera(modifier: Modifier = Modifier) {
+    var number: Long by remember { mutableStateOf(10) }
+    val countdown: Long by remember { mutableStateOf(number*1000) }
     var theCounter by remember { mutableStateOf("${number}") }
     var counterState by remember { mutableStateOf(false) }
     var myCounter: CountDownTimer? by remember { mutableStateOf(null) }
@@ -64,11 +66,6 @@ fun Counter(modifier: Modifier = Modifier) {
                 counterState = false
             }
         }
-
-        if (!counterState) {
-            counterState = true
-        }
-
     }
 
     Column(
@@ -90,7 +87,9 @@ fun Counter(modifier: Modifier = Modifier) {
                 .alpha(0.5f)
             ,
             fontSize = 50.sp,
-            text = "!PREPARATE¡"
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            text = "¡PREPARATE!"
         )
         Button(
             modifier = Modifier
@@ -108,7 +107,7 @@ fun Counter(modifier: Modifier = Modifier) {
             Text(
                 fontSize = 40.sp
                 ,
-                text = if (counterState) "┃┃" else " ► "
+                text = if (counterState) " Pausar " else " Iniciar "
             )
         }
     }
