@@ -1,3 +1,13 @@
+
+/*
+[Recordatorio]
+Duplicar Espera() x2 para las funciones: Workout(), Rest()
+Mirar el AppNavigator en:
+https://chatgpt.com/c/6710e7de-31b4-8006-a638-823cd0a00741
+
+
+
+*/
 package com.yoel.mytabata
 
 import android.os.Bundle
@@ -35,9 +45,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MytabataTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Espera(
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    AppNavigator(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
@@ -45,10 +53,95 @@ class MainActivity : ComponentActivity() {
 }
 
 
+@Composable
+fun AppNavigator(modifier: Modifier = Modifier) {
+    var showCounter by remember { mutableStateOf(true) }
+
+    if (showCounter) {
+        Espera(
+            modifier = modifier,
+            onTimerFinish = { showCounter = false }  // Cambia a la siguiente pantalla cuando el timer termine
+        )
+    } else {
+        Workout(
+            modifier = Modifier
+        )  // Pantalla mostrada cuando el contador llega a 0
+    }
+}
+
+
 // Contador antes del Workout
 @Composable
-fun Espera(modifier: Modifier = Modifier) {
-    var number: Long by remember { mutableStateOf(10) }
+fun Espera(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
+    var number: Long by remember { mutableStateOf(5) }
+    val countdown: Long by remember { mutableStateOf(number*1000) }
+    var theCounter by remember { mutableStateOf("${number}") }
+    var counterState by remember { mutableStateOf(false) }
+    var myCounter: CountDownTimer? by remember { mutableStateOf(null) }
+
+
+    LaunchedEffect(Unit) {
+        myCounter = object : CountDownTimer(countdown, 1000) {
+
+            override fun onTick(millisUntilFinished: Long) {
+                theCounter = (theCounter.toInt() - 1).toString()
+            }
+
+            override fun onFinish() {
+                counterState = false
+                onTimerFinish()
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 20.dp)
+            .background(Color(0xFFffaf42))
+        ,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = theCounter,
+            modifier = Modifier,
+            fontSize = 80.sp
+        )
+        Text(
+            modifier = Modifier
+                .alpha(0.5f)
+            ,
+            fontSize = 50.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            text = "¡PREPARATE!"
+        )
+        Button(
+            modifier = Modifier
+                .padding(top = 10.dp),
+            onClick = {
+                if (counterState) {
+                    myCounter?.cancel()
+                    counterState = false
+                } else {
+                    myCounter?.start()
+                    counterState = true
+                }
+            }
+        ) {
+            Text(
+                fontSize = 40.sp
+                ,
+                text = if (counterState) " Pausar " else " Iniciar "
+            )
+        }
+    }
+}
+
+@Composable
+fun Workout(modifier: Modifier = Modifier) {
+    var number: Long by remember { mutableStateOf(100) }
     val countdown: Long by remember { mutableStateOf(number*1000) }
     var theCounter by remember { mutableStateOf("${number}") }
     var counterState by remember { mutableStateOf(false) }
@@ -72,7 +165,7 @@ fun Espera(modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 20.dp)
-            .background(Color(0xFFffaf42))
+            .background(Color(0xFF44e372))
         ,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
