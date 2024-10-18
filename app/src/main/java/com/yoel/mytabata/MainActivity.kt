@@ -57,12 +57,12 @@ fun AppNavigator(modifier: Modifier = Modifier) {
     if (showCounter) {
         Espera(
             modifier = modifier,
-            onTimerFinish = { showCounter = false }  // Cambia a la siguiente pantalla cuando el timer termine
+            onTimerFinish = { showCounter = false }
         )
     } else {
         Workout(
             modifier = Modifier
-        )  // Pantalla mostrada cuando el contador llega a 0
+        )
     }
 }
 
@@ -71,8 +71,8 @@ fun AppNavigator(modifier: Modifier = Modifier) {
 @Composable
 fun Espera(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
     var number: Long by remember { mutableStateOf(5) }
+    var theCounter by remember { mutableStateOf(number) }
     val countdown: Long by remember { mutableStateOf(number*1000) }
-    var theCounter by remember { mutableStateOf("${number}") }
     var counterState by remember { mutableStateOf(false) }
     var myCounter: CountDownTimer? by remember { mutableStateOf(null) }
 
@@ -81,7 +81,7 @@ fun Espera(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
         myCounter = object : CountDownTimer(countdown, 1000) {
 
             override fun onTick(millisUntilFinished: Long) {
-                theCounter = (theCounter.toInt() - 1).toString()
+                theCounter = (theCounter - 1)
             }
 
             override fun onFinish() {
@@ -101,7 +101,7 @@ fun Espera(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = theCounter,
+            text = theCounter.toString(),
             modifier = Modifier,
             fontSize = 80.sp
         )
@@ -139,8 +139,8 @@ fun Espera(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
 @Composable
 fun Workout(modifier: Modifier = Modifier) {
     var number: Long by remember { mutableStateOf(100) }
-    val countdown: Long by remember { mutableStateOf(number*1000) }
     var theCounter by remember { mutableStateOf("${number}") }
+    val countdown: Long by remember { mutableStateOf(number*1000) }
     var counterState by remember { mutableStateOf(false) }
     var myCounter: CountDownTimer? by remember { mutableStateOf(null) }
 
@@ -183,7 +183,7 @@ fun Workout(modifier: Modifier = Modifier) {
             fontSize = 50.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
-            text = "¡PREPARATE!"
+            text = "¡TRABAJA!"
         )
         Button(
             modifier = Modifier
@@ -237,7 +237,7 @@ fun Rest(modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 20.dp)
-            .background(Color(0xFF44e372))
+            .background(Color(0xFF1293FF))
         ,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -254,7 +254,7 @@ fun Rest(modifier: Modifier = Modifier) {
             fontSize = 50.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
-            text = "¡PREPARATE!"
+            text = "DESCANSA"
         )
         Button(
             modifier = Modifier
