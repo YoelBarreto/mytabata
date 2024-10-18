@@ -1,12 +1,9 @@
 
 /*
 [Recordatorio]
-Duplicar Espera() x2 para las funciones: Workout(), Rest()
 Mirar el AppNavigator en:
 https://chatgpt.com/c/6710e7de-31b4-8006-a638-823cd0a00741
-
-
-
+Pausar Error
 */
 package com.yoel.mytabata
 
@@ -156,8 +153,12 @@ fun Workout(modifier: Modifier = Modifier) {
             }
 
             override fun onFinish() {
-                counterState = false
+                counterState = true
             }
+        }
+        if (!counterState) {
+            myCounter?.start()
+            counterState = true
         }
     }
 
@@ -200,7 +201,78 @@ fun Workout(modifier: Modifier = Modifier) {
             Text(
                 fontSize = 40.sp
                 ,
-                text = if (counterState) " Pausar " else " Iniciar "
+                text = if (counterState) " Pausar " else " Reanudar "
+            )
+        }
+    }
+}
+
+@Composable
+fun Rest(modifier: Modifier = Modifier) {
+    var number: Long by remember { mutableStateOf(100) }
+    val countdown: Long by remember { mutableStateOf(number*1000) }
+    var theCounter by remember { mutableStateOf("${number}") }
+    var counterState by remember { mutableStateOf(false) }
+    var myCounter: CountDownTimer? by remember { mutableStateOf(null) }
+
+
+    LaunchedEffect(Unit) {
+        myCounter = object : CountDownTimer(countdown, 1000) {
+
+            override fun onTick(millisUntilFinished: Long) {
+                theCounter = (theCounter.toInt() - 1).toString()
+            }
+
+            override fun onFinish() {
+                counterState = true
+            }
+        }
+        if (!counterState) {
+            myCounter?.start()
+            counterState = true
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 20.dp)
+            .background(Color(0xFF44e372))
+        ,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = theCounter,
+            modifier = Modifier,
+            fontSize = 80.sp
+        )
+        Text(
+            modifier = Modifier
+                .alpha(0.5f)
+            ,
+            fontSize = 50.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            text = "¡PREPARATE!"
+        )
+        Button(
+            modifier = Modifier
+                .padding(top = 10.dp),
+            onClick = {
+                if (counterState) {
+                    myCounter?.cancel()
+                    counterState = false
+                } else {
+                    myCounter?.start()
+                    counterState = true
+                }
+            }
+        ) {
+            Text(
+                fontSize = 40.sp
+                ,
+                text = if (counterState) " Pausar " else " Reanudar "
             )
         }
     }
