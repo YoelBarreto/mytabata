@@ -1,10 +1,20 @@
 
 /*
-[Recordatorio]
-Mirar el AppNavigator en:
-https://chatgpt.com/c/6710e7de-31b4-8006-a638-823cd0a00741
-Pausar Error
+
+Funcionamiento importante:
+Los sets funcionan y cuando termina pasa a una pantalla de completado.
+Corre el tiempo que muestra en la pantalla.
+Interfaz intuitiva con colores comfortantes.
+
+-------------------------------------------------------------------------
+
+Errores:
+Al pausar se reinicia el contador y llegara a números negativos.
+No tiene interfaz interactiva la cual pones los datos.
+El contador se repite en cada pantalla y no en una clase para cambiarlo.
+
 */
+
 package com.yoel.mytabata
 
 import android.os.Bundle
@@ -52,30 +62,57 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppNavigator(modifier: Modifier = Modifier) {
+    var sets by remember { mutableStateOf(3) }
     var showCounter by remember { mutableStateOf(0) }
 
-    if (showCounter == 0) {
-        Espera(
-            modifier = modifier,
-            onTimerFinish = { showCounter = 1 }
-        )
-    } else if (showCounter == 1) {
-        Workout(
-            modifier = modifier,
-            onTimerFinish = { showCounter = 2 }
-        )
-
+    if (sets > 0) {
+        when (showCounter) {
+            0 -> Espera(
+                modifier = modifier,
+                setsRemaining = sets,
+                onTimerFinish = { showCounter = 1 }
+            )
+            1 -> Workout(
+                modifier = modifier,
+                setsRemaining = sets,
+                onTimerFinish = { showCounter = 2 }
+            )
+            2 -> Rest(
+                modifier = modifier,
+                setsRemaining = sets,
+                onTimerFinish = {
+                    showCounter = 0
+                    sets -= 1
+                }
+            )
+        }
     } else {
-        Rest(
+        Column(
             modifier = Modifier
-        )
+                .fillMaxSize()
+                .padding(top = 20.dp)
+                .background(Color(0xFFffaf42))
+            ,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                modifier = Modifier
+                    .alpha(0.5f)
+                ,
+                fontSize = 50.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                text = "¡COMPPLETADO!"
+            )
+        }
     }
 }
 
 
 // Contador antes del Workout
 @Composable
-fun Espera(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
+fun Espera(modifier: Modifier = Modifier, setsRemaining: Int, onTimerFinish: () -> Unit) {
     var number: Long by remember { mutableStateOf(5) }
     var theCounter by remember { mutableStateOf(number) }
     val countdown: Long by remember { mutableStateOf(number*1000) }
@@ -95,6 +132,10 @@ fun Espera(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
                 onTimerFinish()
             }
         }
+        if (!counterState) {
+            myCounter?.start()
+            counterState = true
+        }
     }
 
     Column(
@@ -106,6 +147,13 @@ fun Espera(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Text(
+            modifier = Modifier
+                .alpha(0.5f)
+            ,
+            text = "$setsRemaining",
+            fontSize = 40.sp
+        )
         Text(
             text = theCounter.toString(),
             modifier = Modifier,
@@ -136,15 +184,15 @@ fun Espera(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
             Text(
                 fontSize = 40.sp
                 ,
-                text = if (counterState) " Pausar " else " Iniciar "
+                text = if (counterState) " Pausar " else " Reanudar "
             )
         }
     }
 }
 
 @Composable
-fun Workout(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
-    var number: Long by remember { mutableStateOf(5) }
+fun Workout(modifier: Modifier = Modifier, setsRemaining: Int, onTimerFinish: () -> Unit) {
+    var number: Long by remember { mutableStateOf(20) }
     var theCounter by remember { mutableStateOf("${number}") }
     val countdown: Long by remember { mutableStateOf(number*1000) }
     var counterState by remember { mutableStateOf(false) }
@@ -178,6 +226,13 @@ fun Workout(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Text(
+            modifier = Modifier
+                .alpha(0.5f)
+            ,
+            text = "$setsRemaining",
+            fontSize = 40.sp
+        )
         Text(
             text = theCounter,
             modifier = Modifier,
@@ -215,8 +270,8 @@ fun Workout(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
 }
 
 @Composable
-fun Rest(modifier: Modifier = Modifier) {
-    var number: Long by remember { mutableStateOf(100) }
+fun Rest(modifier: Modifier = Modifier, setsRemaining: Int, onTimerFinish: () -> Unit) {
+    var number: Long by remember { mutableStateOf(15) }
     val countdown: Long by remember { mutableStateOf(number*1000) }
     var theCounter by remember { mutableStateOf("${number}") }
     var counterState by remember { mutableStateOf(false) }
@@ -232,6 +287,7 @@ fun Rest(modifier: Modifier = Modifier) {
 
             override fun onFinish() {
                 counterState = true
+                onTimerFinish()
             }
         }
         if (!counterState) {
@@ -249,6 +305,13 @@ fun Rest(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Text(
+            modifier = Modifier
+                .alpha(0.5f)
+            ,
+            text = "$setsRemaining",
+            fontSize = 40.sp
+        )
         Text(
             text = theCounter,
             modifier = Modifier,
