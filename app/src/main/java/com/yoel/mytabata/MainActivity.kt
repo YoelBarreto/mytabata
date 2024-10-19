@@ -103,7 +103,7 @@ fun AppNavigator(modifier: Modifier = Modifier) {
                 fontSize = 50.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
-                text = "¡COMPPLETADO!"
+                text = "¡COMPLETADO!"
             )
         }
     }
@@ -192,7 +192,7 @@ fun Espera(modifier: Modifier = Modifier, setsRemaining: Int, onTimerFinish: () 
 
 @Composable
 fun Workout(modifier: Modifier = Modifier, setsRemaining: Int, onTimerFinish: () -> Unit) {
-    var number: Long by remember { mutableStateOf(20) }
+    var number: Long by remember { mutableStateOf(5) }
     var theCounter by remember { mutableStateOf("${number}") }
     val countdown: Long by remember { mutableStateOf(number*1000) }
     var counterState by remember { mutableStateOf(false) }
@@ -271,7 +271,7 @@ fun Workout(modifier: Modifier = Modifier, setsRemaining: Int, onTimerFinish: ()
 
 @Composable
 fun Rest(modifier: Modifier = Modifier, setsRemaining: Int, onTimerFinish: () -> Unit) {
-    var number: Long by remember { mutableStateOf(15) }
+    var number: Long by remember { mutableStateOf(5) }
     val countdown: Long by remember { mutableStateOf(number*1000) }
     var theCounter by remember { mutableStateOf("${number}") }
     var counterState by remember { mutableStateOf(false) }
