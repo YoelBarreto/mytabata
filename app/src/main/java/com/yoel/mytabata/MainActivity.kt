@@ -52,15 +52,21 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppNavigator(modifier: Modifier = Modifier) {
-    var showCounter by remember { mutableStateOf(true) }
+    var showCounter by remember { mutableStateOf(0) }
 
-    if (showCounter) {
+    if (showCounter == 0) {
         Espera(
             modifier = modifier,
-            onTimerFinish = { showCounter = false }
+            onTimerFinish = { showCounter = 1 }
         )
-    } else {
+    } else if (showCounter == 1) {
         Workout(
+            modifier = modifier,
+            onTimerFinish = { showCounter = 2 }
+        )
+
+    } else {
+        Rest(
             modifier = Modifier
         )
     }
@@ -137,8 +143,8 @@ fun Espera(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
 }
 
 @Composable
-fun Workout(modifier: Modifier = Modifier) {
-    var number: Long by remember { mutableStateOf(100) }
+fun Workout(modifier: Modifier = Modifier, onTimerFinish: () -> Unit) {
+    var number: Long by remember { mutableStateOf(5) }
     var theCounter by remember { mutableStateOf("${number}") }
     val countdown: Long by remember { mutableStateOf(number*1000) }
     var counterState by remember { mutableStateOf(false) }
@@ -154,6 +160,7 @@ fun Workout(modifier: Modifier = Modifier) {
 
             override fun onFinish() {
                 counterState = true
+                onTimerFinish()
             }
         }
         if (!counterState) {
